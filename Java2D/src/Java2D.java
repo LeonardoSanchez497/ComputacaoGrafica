@@ -29,7 +29,6 @@ import java.awt.image.LookupTable;
 import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 
-
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JApplet;
@@ -42,7 +41,6 @@ import javax.swing.Timer;
 
 public class Java2D extends JApplet implements ActionListener {
 	ImagePanel imgSrc, imgDst;
-	
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -241,62 +239,63 @@ public class Java2D extends JApplet implements ActionListener {
 	public Java2D() {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
-		
+
 		JMenu menu = new JMenu("File");
 		JMenuItem mi = new JMenuItem("Trabalho");
 		mi.addActionListener(this);
 		menu.add(mi);
-		
+
 		mi = new JMenuItem("Exit");
 		mi.addActionListener(this);
 		menu.add(mi);
 		mb.add(menu);
-		
+
 		// MENU PROCESS
-				JMenu menuProcess = new JMenu("Process");
+		JMenu menuProcess = new JMenu("Process");
 
-				mi = new JMenuItem("RGB to Gray I");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("RGB to Gray I");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("RGB to Gray II");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("RGB to Gray II");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("Sharpen");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("Sharpen");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("Edge");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("Edge");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("Brightness");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
-				
-				mi = new JMenuItem("Rotate");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("Brightness");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("Mirror Effect");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("Rotate");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mi = new JMenuItem("Negative");
-				mi.addActionListener(this);
-				menuProcess.add(mi);
+		mi = new JMenuItem("Mirror Effect");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				mb.add(menuProcess);
+		mi = new JMenuItem("Negative");
+		mi.addActionListener(this);
+		menuProcess.add(mi);
 
-				// ADD PANELS
-				Container cp = this.getContentPane();
-				cp.setLayout(new FlowLayout());
-				imgSrc = new ImagePanel();
-				imgDst = new ImagePanel();
-				cp.add(imgSrc);
-				cp.add(imgDst);
+		mb.add(menuProcess);
+
+		// ADD PANELS
+		Container cp = this.getContentPane();
+		cp.setLayout(new FlowLayout());
+		imgSrc = new ImagePanel();
+		imgDst = new ImagePanel();
+		cp.add(imgSrc);
+		cp.add(imgDst);
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -316,10 +315,9 @@ public class Java2D extends JApplet implements ActionListener {
 		} else {
 			process(cmd);
 		}
-		
-		
-		
+
 	}
+
 	void process(String menuOp) {
 		BufferedImageOp op = null;
 		BufferedImage bi = null;
@@ -359,15 +357,16 @@ public class Java2D extends JApplet implements ActionListener {
 			imgDst.setImage(bi1);
 		} else if (menuOp.equals("Negative")) {
 			byte reverse[] = new byte[256];
-		    for (int i = 0; i < 256; i++) {
-		      reverse[i] = (byte) (255 - i);
-		    }
-		    LookupTable lookupTable = new ByteLookupTable(0, reverse);
-		    LookupOp lop = new LookupOp(lookupTable, null);
-		    bi = lop.filter(imgSrc.getImage(), null);
-		    imgDst.setImage(bi);
+			for (int i = 0; i < 256; i++) {
+				reverse[i] = (byte) (255 - i);
+			}
+			LookupTable lookupTable = new ByteLookupTable(0, reverse);
+			LookupOp lop = new LookupOp(lookupTable, null);
+			bi = lop.filter(imgSrc.getImage(), null);
+			imgDst.setImage(bi);
 		}
 	}
+
 	private BufferedImage horizontalmirror(BufferedImage bi) {
 		BufferedImage temp = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2 = temp.createGraphics();
@@ -395,7 +394,6 @@ public class Java2D extends JApplet implements ActionListener {
 
 		return imagOut;
 	}
-
 
 	class ImagePanel extends JPanel {
 
@@ -428,5 +426,5 @@ public class Java2D extends JApplet implements ActionListener {
 		}
 
 	}
-	
+
 }
