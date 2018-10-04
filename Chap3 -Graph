@@ -1,0 +1,123 @@
+package chap3;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class Chap3 extends JApplet {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// Create a frame to run the application in Windows
+		JFrame frame = new JFrame();
+		frame.setTitle("Hello 2D");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Create an instance of the main class to add to the frame.
+		JApplet applet = new Chap3();
+		applet.init();
+
+		// Add the applet to the frame.
+		frame.getContentPane().add(applet);
+		frame.pack();
+		frame.setVisible(true);
+
+		System.out.println(System.getProperty("java.home", "."));
+	}
+
+	public void init() {
+		// Create the panel where the graphics are drawn and add it to the applet.
+		JPanel panel = new MyPanel();
+		getContentPane().add(panel);
+	}
+}
+
+class MyPanel extends JPanel {
+
+	float[] valS1 = { 200.0f, 124.2f, 302.09f, 467.41f };
+	float[] valS2 = { 300.0f, 224.2f, 402.09f, 767.41f };
+	String[] xLabels = { "Mes1", "Mes2", "Mes3", "Mes4" };
+
+	public MyPanel() {
+		setPreferredSize(new Dimension(500, 500));
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+		BarPlot(g2, 50, 100, 400, 200, valS1, valS2, xLabels, "Home Gas expensivies");
+	}
+
+	private void BarPlot(Graphics2D g2, int x, int y, int width, int height, float[] valS1, float[] valS2,
+			String[] xLabels, String title) {
+		// Fonts
+		Font fontAxis = new Font("Arial", Font.PLAIN, 8);
+		Font fonttitle = new Font("Verdana", Font.BOLD, 15);
+		FontRenderContext frc;
+
+		// draw the rectangular area of the plt
+		g2.setColor(Color.black);
+		g2.drawRect(x, y, width, height);
+
+		// Draw the rectangular area of the plot
+		int wMargin = 50;
+		int hMargin = 30;
+		int xPlot = x + wMargin;
+		int yPlot = y + hMargin;
+		int wPlot = width - 2 * wMargin;
+		int hPlot = height - 2 * hMargin;
+
+		g2.setColor(Color.WHITE); // use a texturePaint
+		g2.fillRect(xPlot, yPlot, wPlot, hPlot);
+
+		// Calculations to draw the axis and the data
+		int slot = wPlot / valS1.length;
+		int barwidth = 30;
+		int halfbarwidth = barwidth / 2;
+		int halfslot = slot / 2;
+
+		int maxV = (int) Math.ceil(getMaxValue(valS1));
+		float fScale = hPlot/(float)maxV;
+		// Draw x Axis
+		g2.setColor(Color.blue);
+		g2.drawLine(xPlot, yPlot + hPlot, xPlot + wPlot, yPlot + hPlot);
+		for (int i = 0; i <= valS1.length; i++) {
+			int xi = xPlot + i * slot;
+			int yi = yPlot + hPlot;
+
+			g2.drawLine(xi, yi, xi, yi + 5);
+		}
+
+		// draw bars and Text
+		g2.setFont(fontAxis);
+		frc = g2.getFontRenderContext();
+		for (int i = 0; i < valS1.length; i++) {
+			int hBar = (int) (valS1[i] * fScale);
+			int xi = xPlot + i * slot + halfslot - halfbarwidth;
+			int yi = yPlot + hPlot + hBar;
+			g2.setColor(Color.red);
+			g2.fillRect(xi, yi, barwidth, hBar);
+			
+		}
+
+	}
+
+	private float getMaxValue(float v[]) {
+		float max = 0.0f;
+		for (int i = 0; i < v.length; i++) {
+			if (v[i] > max) 
+				max = v[i];
+			
+		}
+		return max;
+
+	}
+}
