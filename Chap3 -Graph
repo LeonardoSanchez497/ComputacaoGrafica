@@ -17,7 +17,7 @@ public class Chap3 extends JApplet {
 		// TODO Auto-generated method stub
 		// Create a frame to run the application in Windows
 		JFrame frame = new JFrame();
-		frame.setTitle("Hello 2D");
+		frame.setTitle("Graph with expensives!!");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Create an instance of the main class to add to the frame.
@@ -59,7 +59,7 @@ class MyPanel extends JPanel {
 	private void BarPlot(Graphics2D g2, int x, int y, int width, int height, float[] valS1, float[] valS2,
 			String[] xLabels, String title) {
 		// Fonts
-		Font fontAxis = new Font("Arial", Font.PLAIN, 8);
+		Font fontAxis = new Font("Arial", Font.PLAIN, 11);
 		Font fonttitle = new Font("Verdana", Font.BOLD, 15);
 		FontRenderContext frc;
 
@@ -85,7 +85,9 @@ class MyPanel extends JPanel {
 		int halfslot = slot / 2;
 
 		int maxV = (int) Math.ceil(getMaxValue(valS1));
-		float fScale = hPlot/(float)maxV;
+		int divYAxis = 5;
+
+		float fScale = hPlot / (float) maxV;
 		// Draw x Axis
 		g2.setColor(Color.blue);
 		g2.drawLine(xPlot, yPlot + hPlot, xPlot + wPlot, yPlot + hPlot);
@@ -105,22 +107,41 @@ class MyPanel extends JPanel {
 			int yi = yPlot + hPlot - hBar;
 			g2.setColor(Color.red);
 			g2.fillRect(xi, yi, barwidth, hBar);
-			
+
 			g2.setColor(Color.black);
-			xi = (int) (xPlot +1  * slot + halfslot - fontAxis.getStringBounds(xLabels[i], frc).getWidth() /2);
+			xi = (int) (xPlot + i * slot + halfslot - fontAxis.getStringBounds(xLabels[i], frc).getWidth() / 2);
 			yi = (int) (yPlot + hPlot + 5 + fontAxis.getStringBounds(xLabels[i], frc).getHeight());
-			
-			
+
+			g2.drawString(xLabels[i], xi, yi);
+
 		}
 
+		// draw Y Axis
+		g2.drawLine(xPlot, yPlot, xPlot, yPlot + hPlot);
+		slot = hPlot / divYAxis;
+		int inc = (int)(maxV / divYAxis);
+		for (int i = 0; i <= divYAxis; i++) {
+			int xi = xPlot;
+			int yi = yPlot + hPlot - i * slot;
+			g2.drawLine(xi, yi, xi - 3, yi);
+		
+			String s = Integer.toString(i*inc);
+			
+			int wText = (int)(fontAxis.getStringBounds(s,frc).getWidth());
+			int hText = (int)(fontAxis.getStringBounds(s,frc).getHeight());
+			g2.drawString(s, xi-5-wText, yi+hText /2-3);
+			
+		}
+		
+		
 	}
 
 	private float getMaxValue(float v[]) {
 		float max = 0.0f;
 		for (int i = 0; i < v.length; i++) {
-			if (v[i] > max) 
+			if (v[i] > max)
 				max = v[i];
-			
+
 		}
 		return max;
 
