@@ -5,8 +5,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -75,7 +80,11 @@ class MyPanel extends JPanel {
 		int wPlot = width - 2 * wMargin;
 		int hPlot = height - 2 * hMargin;
 
-		g2.setColor(Color.WHITE); // use a texturePaint
+		//g2.setColor(Color.WHITE); // use a texturePaint
+		BufferedImage image = getImage("images/Dragon_Ball_Z_logo.png");
+		
+		g2.setPaint(new TexturePaint(image, new Rectangle2D.Double(xPlot, yPlot, wPlot, hPlot))); //o texturePaint recebe a imagem ou textura e o rectangulo ancura
+		
 		g2.fillRect(xPlot, yPlot, wPlot, hPlot);
 
 		// Calculations to draw the axis and the data
@@ -86,6 +95,10 @@ class MyPanel extends JPanel {
 
 		int maxV = (int) Math.ceil(getMaxValue(valS1));
 		int divYAxis = 5;
+		
+		while (maxV % divYAxis !=0) {
+			maxV++;
+		}
 
 		float fScale = hPlot / (float) maxV;
 		// Draw x Axis
@@ -133,6 +146,17 @@ class MyPanel extends JPanel {
 			
 		}
 		
+		//draw Title
+		g2.setFont(fonttitle);
+		g2.setColor(Color.red);
+		
+		Rectangle2D bounds = fonttitle.getStringBounds(title,frc);
+		int wText = (int) bounds.getWidth();
+		int hText = (int) bounds.getHeight();
+		int xTitle = xPlot + (wPlot - wText)/2;
+		int yTitle = yPlot - (hMargin - hText) /2;
+		
+		g2.drawString(title, xTitle, yTitle);
 		
 	}
 
@@ -145,5 +169,18 @@ class MyPanel extends JPanel {
 		}
 		return max;
 
+	}
+	
+	private BufferedImage getImage(String path) {
+		BufferedImage image = null;
+		URL url = getClass().getClassLoader().getResource(path);
+		
+		try {
+			image = ImageIO.read(url);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return image;
+		
 	}
 }
