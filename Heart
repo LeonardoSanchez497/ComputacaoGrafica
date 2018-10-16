@@ -1,0 +1,265 @@
+package moveshape;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class MoveShape extends JApplet {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		// Create a frame to run the application in Windows
+		JFrame frame = new JFrame();
+		frame.setTitle("MoveShape");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Create an instance of the main class to add to the frame.
+		JApplet applet = new MoveShape();
+		applet.init();
+
+		// Add the applet to the frame.
+		frame.getContentPane().add(applet);
+		frame.pack();
+		frame.setVisible(true);
+
+		System.out.println(System.getProperty("java.home", "."));
+	}
+
+	public void init() {
+		// Create the panel where the graphics are drawn and add it to the applet.
+		JPanel panel = new MyPanel();
+		getContentPane().add(panel);
+	}
+}
+
+class MyPanel extends JPanel implements MouseListener, MouseMotionListener {
+	Shape h = new Heart(10, 10, 50, 50);
+	Shape e = new Ellipse2D.Double(200 - 25, 200 - 25, 50, 50);
+
+	AffineTransform tr = new AffineTransform();
+
+	boolean selected = false;
+	boolean collision = false;
+	int actualX, deltaX;
+	int actualY, deltaY;
+
+	public MyPanel() {
+		setPreferredSize(new Dimension(400, 400));
+		setBackground(Color.LIGHT_GRAY);
+
+		addMouseListener(this);
+		addMouseMotionListener(this);
+
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+		if (collision) {
+			g2.setPaint(Color.DARK_GRAY);
+			g2.fill(e);
+			g2.fill(h);
+		} else {
+			g2.setPaint(Color.yellow);
+			g2.fill(h);
+
+			g2.setPaint(Color.RED);
+			g2.fill(e);
+		}
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent m) {
+		// TODO Auto-generated method stub
+		if (selected) {
+			deltaX = m.getX() - actualX;
+			deltaY = m.getY() - actualY;
+
+			tr.setToTranslation(deltaX, deltaY);
+
+			h = tr.createTransformedShape(h);
+
+			actualX = actualX + deltaX;
+			actualY = actualY + deltaY;
+
+			/*
+			 * if (h.intersects(e.getBounds2D())) collision = true; else collision = false;
+			 */
+
+			if (e.contains(h.getBounds().getCenterX(), h.getBounds().getCenterY())) {
+				collision = true;
+			} else
+				collision = false;
+
+		}
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if (h.contains(e.getX(), e.getY())) {
+			selected = true;
+			actualX = e.getX();
+			actualY = e.getY();
+
+		} else
+			selected = false;
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+}
+
+
+------------------------------------------------------------------------------
+
+package moveshape;
+
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+public class Heart implements Shape {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	GeneralPath path;
+
+	public Heart(float x, float y, float w, float h) {
+		// Shape 1 = new Rectangle2D.Double ( 0,10,50,100);
+		// Shape 2 = new Ellipse2D.Double (10,10,50,100);
+
+		float x0 = x + 0.5f * w;
+		float y0 = y + 0.3f * h;
+
+		float x1 = x + 0.1f * w;
+		float y1 = y;
+
+		float x2 = x;
+		float y2 = y + 0.6f * h;
+
+		float x3 = x + 0.5f * w;
+		float y3 = y + 0.9f * h;
+
+		float x4 = x + w;
+		float y4 = y + 0.6f * h;
+
+		float x5 = x + 0.9f * w;
+		float y5 = y;
+
+		path = new GeneralPath();
+		path.moveTo(x0, y0);
+		path.curveTo(x1, y1, x2, y2, x3, y3);
+		path.curveTo(x4, y4, x5, y5, x0, y0);
+
+	}
+
+	@Override
+	public boolean contains(Point2D arg0) {
+		// TODO Auto-generated method stub
+		return path.contains(arg0);
+	}
+
+	@Override
+	public boolean contains(Rectangle2D arg0) {
+		// TODO Auto-generated method stub
+		return path.contains(arg0);
+	}
+
+	@Override
+	public boolean contains(double arg0, double arg1) {
+		// TODO Auto-generated method stub
+		return path.contains(arg0, arg1);
+	}
+
+	@Override
+	public boolean contains(double arg0, double arg1, double arg2, double arg3) {
+		// TODO Auto-generated method stub
+		return path.contains(arg0, arg1, arg2, arg3);
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return path.getBounds();
+	}
+
+	@Override
+	public Rectangle2D getBounds2D() {
+		// TODO Auto-generated method stub
+		return path.getBounds2D();
+	}
+
+	@Override
+	public PathIterator getPathIterator(AffineTransform arg0) {
+		// TODO Auto-generated method stub
+		return path.getPathIterator(arg0);
+	}
+
+	@Override
+	public PathIterator getPathIterator(AffineTransform arg0, double arg1) {
+		// TODO Auto-generated method stub
+		return path.getPathIterator(arg0, arg1);
+	}
+
+	@Override
+	public boolean intersects(Rectangle2D arg0) {
+		// TODO Auto-generated method stub
+		return path.intersects(arg0);
+	}
+
+	@Override
+	public boolean intersects(double arg0, double arg1, double arg2, double arg3) {
+		// TODO Auto-generated method stub
+		return path.intersects(arg0, arg1, arg2, arg3);
+	}
+
+}
