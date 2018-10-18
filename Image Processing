@@ -1,4 +1,4 @@
-package ip1819;
+package ip1819_;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -24,14 +24,14 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class IP1819 extends JFrame implements ActionListener {
+public class IP1819_ extends JFrame implements ActionListener {
 
 	ImagePanel imgSrc, imgDst;
 	JFileChooser fc = new JFileChooser("c:/img");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		JFrame frame = new IP1819();
+		JFrame frame = new IP1819_();
 		frame.setTitle("IP1819");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -39,7 +39,7 @@ public class IP1819 extends JFrame implements ActionListener {
 
 	}
 
-	public IP1819() {
+	public IP1819_() {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
 
@@ -128,7 +128,11 @@ public class IP1819 extends JFrame implements ActionListener {
 			Kernel k = new Kernel(3, 3, data);
 			op = new ConvolveOp(k);
 		} else if(cmd.equals("Smooth")) {
-			
+					float[] data = {1/9f, 1/9f, 1/9f,
+							1/9f, 1/9f,1/9f,
+							1/9f, 1/9f,1/9f};
+					Kernel k = new Kernel(3, 3, data);
+					op = new ConvolveOp(k);
 		}
 
 		if (op != null) {
