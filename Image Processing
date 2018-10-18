@@ -1,4 +1,4 @@
-package ip1819_;
+package ip1819;
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 
@@ -22,14 +24,14 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class IP1819_ extends JFrame implements ActionListener {
+public class IP1819 extends JFrame implements ActionListener {
 
 	ImagePanel imgSrc, imgDst;
 	JFileChooser fc = new JFileChooser("c:/img");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		JFrame frame = new IP1819_();
+		JFrame frame = new IP1819();
 		frame.setTitle("IP1819");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -37,7 +39,7 @@ public class IP1819_ extends JFrame implements ActionListener {
 
 	}
 
-	public IP1819_() {
+	public IP1819() {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
 
@@ -64,6 +66,12 @@ public class IP1819_ extends JFrame implements ActionListener {
 		m1.addActionListener(this);
 		menu.add(m1);
 		m1 = new JMenuItem("RGB to Gray v2");
+		m1.addActionListener(this);
+		menu.add(m1);
+		m1 = new JMenuItem("Edge");
+		m1.addActionListener(this);
+		menu.add(m1);
+		m1 = new JMenuItem("Smooth");
 		m1.addActionListener(this);
 		menu.add(m1);
 		mb.add(menu);
@@ -95,7 +103,10 @@ public class IP1819_ extends JFrame implements ActionListener {
 				}
 			}
 		} else if ("Save Image".equals(cmd)) {
-
+			
+		} else if ("Copy Image".equals(cmd)) {
+			imgSrc.setImage(imgDst.getImage());
+			
 		} else if ("Exit".equals(cmd)) {
 			System.exit(0);
 		} else
@@ -110,6 +121,14 @@ public class IP1819_ extends JFrame implements ActionListener {
 		} else if (cmd.equals("RGB to Gray v2")) {
 			imgDst.setImage(RGBToGray(imgSrc.getImage()));
 			pack();
+		} else if(cmd.equals("Edge")) {
+			float[] data = {0f, -1f, 0f,
+							-1f, 4f, -1f,
+							0f, -1f, 0f};
+			Kernel k = new Kernel(3, 3, data);
+			op = new ConvolveOp(k);
+		} else if(cmd.equals("Smooth")) {
+			
 		}
 
 		if (op != null) {
@@ -174,6 +193,4 @@ class ImagePanel extends JPanel {
 	public BufferedImage getImage() {
 		return image;
 	}
-}
-
 }
