@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -21,11 +22,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-public class IP1819_ extends JFrame implements ActionListener{
+public class IP1819_ extends JFrame implements ActionListener {
 
-	ImagePanel imgSrc,imgDst;
+	ImagePanel imgSrc, imgDst;
 	JFileChooser fc = new JFileChooser("c:/img");
-	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		JFrame frame = new IP1819_();
@@ -33,21 +34,18 @@ public class IP1819_ extends JFrame implements ActionListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
-		
-		
+
 	}
-	
-	
+
 	public IP1819_() {
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
-		
-		JMenu menu = new JMenu ("File");
-		
+
+		JMenu menu = new JMenu("File");
+
 		JMenuItem m1 = new JMenuItem("Open Image");
 		m1.addActionListener(this);
-		
-		
+
 		menu.add(m1);
 		m1 = new JMenuItem("Save Image");
 		m1.addActionListener(this);
@@ -58,10 +56,10 @@ public class IP1819_ extends JFrame implements ActionListener{
 		m1 = new JMenuItem("Exit");
 		m1.addActionListener(this);
 		menu.add(m1);
-		
+
 		mb.add(menu);
-		
-		menu = new JMenu ("Processing");
+
+		menu = new JMenu("Processing");
 		m1 = new JMenuItem("RGB to Gray");
 		m1.addActionListener(this);
 		menu.add(m1);
@@ -69,25 +67,24 @@ public class IP1819_ extends JFrame implements ActionListener{
 		m1.addActionListener(this);
 		menu.add(m1);
 		mb.add(menu);
-		
+
 		imgSrc = new ImagePanel();
 		imgDst = new ImagePanel();
 		Container cp = this.getContentPane();
 		cp.setLayout(new FlowLayout());
 		cp.add(imgSrc);
 		cp.add(imgDst);
-		
-	}
 
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		String cmd = e.getActionCommand();
-		
+
 		if ("Open Image".equals(cmd)) {
 			int result = fc.showOpenDialog(this);
-			if(result == JFileChooser.APPROVE_OPTION) {
+			if (result == JFileChooser.APPROVE_OPTION) {
 				try {
 					BufferedImage bi = ImageIO.read(fc.getSelectedFile());
 					imgSrc.setImage(bi);
@@ -97,60 +94,83 @@ public class IP1819_ extends JFrame implements ActionListener{
 					e1.printStackTrace();
 				}
 			}
-		}
-		else if ("Save Image".equals(cmd)) {
-			
-			
-		}
-		else if ("Exit".equals(cmd)) {
+		} else if ("Save Image".equals(cmd)) {
+
+		} else if ("Exit".equals(cmd)) {
 			System.exit(0);
-		}
-		else 
+		} else
 			processing(cmd);
 	}
+
 	private void processing(String cmd) {
 		BufferedImageOp op = null;
-		
+
 		if (cmd.equals("RGB to Gray")) {
-			op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY),null);
-		}else if (cmd.equals("RGB to Gray v2")) {
-			
+			op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+		} else if (cmd.equals("RGB to Gray v2")) {
+			imgDst.setImage(RGBToGray(imgSrc.getImage()));
+			pack();
 		}
-		
-		if( op != null) {
+
+		if (op != null) {
 			imgDst.setImage(op.filter(imgSrc.getImage(), null));
 			pack();
-			
+
 		}
-		
+
+	}
+
+	private BufferedImage RGBToGray(BufferedImage imgIn) {
+		BufferedImage imgOut = new BufferedImage(imgIn.getWidth(), imgIn.getHeight(), imgIn.getType());
+
+		WritableRaster rasterImgIn = imgIn.getRaster();
+		WritableRaster rasterImgOut = imgOut.getRaster();
+		int[] rgba = new int[4];
+
+		for (int y = 0; y < imgIn.getHeight(); y++) {
+			for (int x = 0; x < imgIn.getWidth(); x++) {
+
+				rasterImgIn.getPixel(x, y, rgba);
+
+				int gray = (int) ((rgba[0] + rgba[1] + rgba[2]) / 3f);
+
+				rgba[0] = rgba[1] = rgba[2] = gray;
+
+				rasterImgOut.setPixel(x, y, rgba);
+
+			}
+		}
+
+		return imgOut;
 	}
 
 }
-class ImagePanel extends JPanel{
+
+class ImagePanel extends JPanel {
 	BufferedImage image = null;
-	
-	
+
 	public ImagePanel() {
-		setPreferredSize(new Dimension(265,256));
-		
+		setPreferredSize(new Dimension(265, 256));
+
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D)g;
-		
-		if (image ==null)
-			g2.drawRect(0, 0, getWidth()-1, getHeight()-1);
-		else 
-			g2.drawImage(image,0,0,this);
-		
+		Graphics2D g2 = (Graphics2D) g;
+
+		if (image == null)
+			g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+		else
+			g2.drawImage(image, 0, 0, this);
+
 	}
-	public void setImage (BufferedImage bi) {
+
+	public void setImage(BufferedImage bi) {
 		image = bi;
-		setPreferredSize(new Dimension (bi.getWidth(),bi.getHeight()));
+		setPreferredSize(new Dimension(bi.getWidth(), bi.getHeight()));
 		repaint();
 	}
-	
+
 	public BufferedImage getImage() {
 		return image;
 	}
