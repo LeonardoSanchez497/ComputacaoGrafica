@@ -1,0 +1,119 @@
+package simplagame;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+
+import javax.swing.JApplet;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class SimpleGame extends JApplet {
+	public static void main(String s[]) {
+		JFrame frame = new JFrame();
+		frame.setTitle("SimpleGame");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JApplet applet = new SimpleGame();
+		applet.init();
+		
+		frame.getContentPane().add(applet);
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	public void init() {
+		JPanel panel = new MyPanel();
+		getContentPane().add(panel);
+	}
+}
+
+class MyPanel extends JPanel implements Runnable{
+	
+	Shape cross1_1, cross1_2,cross2_1, cross2_2;
+	Shape player;
+	int tx = 60, ty = 340;
+	int r = 15;
+	AffineTransform tr = new AffineTransform();
+	float ang1=0f;
+	
+	public MyPanel() {
+		setPreferredSize(new Dimension(400, 400));
+		setBackground(Color.LIGHT_GRAY);
+		
+		Thread thread = new Thread (this);
+		thread.start();
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
+		//rendering
+		cross1_1 =new Rectangle2D.Double(-100,-10,200,20);
+		cross1_2 =new Rectangle2D.Double(-10,-100,20,200);
+		//Shape 1
+		g2.setPaint(Color.red);
+		tr.setToIdentity();
+		tr.translate(120, 120);
+		tr.rotate(Math.toRadians(ang1));
+		
+		cross1_1 = tr.createTransformedShape(cross1_1);
+		g2.fill(cross1_1);
+
+		cross1_2 = tr.createTransformedShape(cross1_2);
+		g2.fill(cross1_2);
+		
+		cross2_1 =new Rectangle2D.Double(-100,-10,200,20);
+		cross2_2 =new Rectangle2D.Double(-10,-100,20,200);
+		//Shape 2
+		g2.setPaint(Color.YELLOW);
+		tr.setToIdentity();
+		tr.translate(280, 280);
+		tr.rotate(Math.toRadians(-ang1));
+		
+		cross2_1 = tr.createTransformedShape(cross2_1);
+		g2.fill(cross2_1);
+
+		cross2_2 = tr.createTransformedShape(cross2_2);
+		g2.fill(cross2_2);
+		
+		//Shape Player
+		player = new Ellipse2D.Double(-r,-r,2*r,2*r);
+		g2.setPaint(Color.BLUE);
+		tr.setToIdentity();
+		tr.translate(tx,ty);
+		player = tr.createTransformedShape(player);
+		g2.fill(player);
+		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		while (true) {
+			//change of the model
+			ang1 =(ang1 + 5.5f)%360;
+			
+			/*if (angle1 > 360f)
+			 * 	ang1 =0f;
+			 */
+			
+			
+			repaint();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+}
